@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>猜數字遊戲</title>
+  <style>
+    body {
+      background-color: #222;
+      color: #f0f0f0;
+      font-family: "Microsoft JhengHei", Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 30px;
+    }
+    h2, p, #log {
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      margin: 8px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background-color: #00cc99;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #009977;
+    }
+    .hidden {
+      display: none;
+    }
+    #log {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      background-color: #333;
+      padding: 15px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="section">
+    <h2>🔐 關主設定答案</h2>
+    <input type="number" id="answerInput" placeholder="輸入答案">
+    <button onclick="setAnswer()">✅ 設定</button>
+    <p id="maskAnswer" class="hidden">✅ 答案已設定為：<b>***</b>（已隱藏）</p>
+  </div>
+
+  <div id="guessArea" class="section hidden">
+    <h2>🎮 玩家猜數字</h2>
+    <input type="number" id="guessInput" placeholder="輸入你的猜測">
+    <button onclick="guess()">猜！</button>
+  </div>
+
+  <div id="log" class="section"></div>
+
+  <script>
+    let answer = null;
+    let limit = 5;
+    let tries = 0;
+    let gameOver = false;
+
+    function setAnswer() {
+      const input = document.getElementById('answerInput').value;
+      if (input === '') {
+        alert("請輸入答案！");
+        return;
+      }
+      answer = Number(input);
+      document.getElementById('answerInput').style.display = 'none';
+      event.target.style.display = 'none';
+      document.getElementById('maskAnswer').classList.remove('hidden');
+      document.getElementById('guessArea').classList.remove('hidden');
+      log(`請開始猜數字（最多猜 5 次）`);
+    }
+
+    function guess() {
+      if (gameOver) {
+        log("⚠️ 遊戲已結束，請重新整理頁面");
+        return;
+      }
+
+      const guess = Number(document.getElementById('guessInput').value);
+      if (isNaN(guess)) {
+        alert("請輸入數字！");
+        return;
+      }
+
+      tries++;
+      limit--;
+
+      if (guess < answer) {
+        log(`第 ${tries} 次：太小囉！`);
+      } else if (guess > answer) {
+        log(`第 ${tries} 次：太大囉！`);
+      } else {
+        log(`🎉 答對囉！總共猜了 ${tries} 次`);
+        gameOver = true;
+        return;
+      }
+
+      if (limit === 0) {
+        log(`💀 87你已猜超過五次！正確答案是 ${answer}`);
+        gameOver = true;
+      }
+    }
+
+    function log(msg) {
+      const logBox = document.getElementById('log');
+      logBox.textContent += msg + "\n";
+    }
+  </script>
+
+</body>
+</html>
